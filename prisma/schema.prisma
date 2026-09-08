@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("INSPECTOR") // ADMIN, INSPECTOR, REVIEWER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  inspections   Inspection[]   @relation("InspectorRelation")
+  reviewActions ReviewAction[] @relation("ReviewerRelation")
+  auditLogs     AuditLog[]
+}
+
+model Product {
+  id           String   @id @default(uuid())
+  name         String
+  category     String
+  manufacturer String?
+  mrp          Float?
+  netQuantity  String?
+  barcode      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  inspections Inspection[]
+}
+
+model Inspection {
+  id              String   @id @default(uuid())
+  inspectorId     String
+  productId       String?
+  status          String   @default("PENDING") // PENDING, COMPLIANT, NON_COMPLIANT, REQUIRES_REVIEW
+  score           Float?
+  confidenceScore Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  inspector User     @relation("InspectorRelation", fields: [inspectorId], references: [id])
+  product   Product? @relation(fields: [productId], references: [id])
+
+  images        InspectionImage[]
+  extractedData ExtractedField[]
+  results       ComplianceResult[]
+  reviewActions ReviewAction[]
+  auditLogs     AuditLog[]
+}
+
+model InspectionImage {
+  id           String   @id @default(uuid())
+  inspectionId String
+  url          String
+  type         String // FRONT, BACK, SIDE, BARCODE, MRP
+  createdAt    DateTime @default(now())
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id])
+}
+
+model ExtractedField {
+  id           String   @id @default(uuid())
+  inspectionId String
+  fieldKey     String // e.g., 'mrp', 'net_quantity'
+  aiValue      String?
+  humanValue   String?
+  confidence   Float?
+  isCorrected  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id])
+}
+
+model ComplianceRule {
+  id              String   @id @default(uuid())
+  ruleCode        String   @unique
+  title           String
+  description     String
+  category        String
+  applicability   String
+  requiredFields  String // JSON string of required fields
+  validationLogic String // JSON/Text representation of the logic
+  severity        String   @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  source          String
+  sourceVersion   String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  results ComplianceResult[]
+}
+
+model ComplianceResult {
+  id             String   @id @default(uuid())
+  inspectionId   String
+  ruleId         String
+  status         String // PASS, FAIL, REVIEW
+  explanation    String?
+  evidenceField  String?
+  confidence     Float?
+  createdAt      DateTime @default(now())
+
+  inspection     Inspection     @relation(fields: [inspectionId], references: [id])
+  rule           ComplianceRule @relation(fields: [ruleId], references: [id])
+}
+
+model ReviewAction {
+  id           String   @id @default(uuid())
+  inspectionId String
+  reviewerId   String
+  action       String // APPROVED, REJECTED, MODIFIED
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id])
+  reviewer   User       @relation("ReviewerRelation", fields: [reviewerId], references: [id])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  inspectionId String
+  userId       String
+  action       String // CREATED, OCR_COMPLETED, RULE_EVALUATED, HUMAN_VERIFIED, REPORT_GENERATED
+  details      String? // JSON string
+  timestamp    DateTime @default(now())
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+}
