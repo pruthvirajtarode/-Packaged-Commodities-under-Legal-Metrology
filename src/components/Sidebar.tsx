@@ -66,10 +66,12 @@ export function Sidebar() {
             <p className="text-xs text-slate-400">Inspector</p>
           </div>
         </div>
-        <button className="flex items-center w-full text-slate-400 hover:text-white transition text-sm">
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </button>
+        <Link href="/">
+          <button className="flex items-center w-full text-slate-400 hover:text-white transition text-sm">
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </button>
+        </Link>
       </div>
     </div>
   );
