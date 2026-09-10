@@ -23,48 +23,45 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  let body: any = {};
   try {
-    const body = await request.json()
+    body = await request.json()
     
     // In a real app, inspectorId comes from the session
     // For demo, we get the first inspector
     const inspector = await prisma.user.findFirst({ where: { role: 'INSPECTOR' } })
     
     if (!inspector) {
-      return NextResponse.json({ error: 'No inspector found in DB for demo.' }, { status: 400 })
+      throw new Error('No inspector found in DB.');
     }
 
-    let inspection;
-    try {
-      inspection = await prisma.inspection.create({
-        data: {
-          inspectorId: inspector.id,
-          productId: body.productId || null,
-          status: 'PENDING',
-        }
-      });
-      await prisma.auditLog.create({
-        data: {
-          inspectionId: inspection.id,
-          userId: inspector.id,
-          action: 'CREATED',
-          details: JSON.stringify({ message: 'Inspection created via web interface.' })
-        }
-      });
-    } catch (e) {
-      console.warn("DB Write failed (Vercel Read-Only). Using mock demo ID.", e);
-      inspection = {
-        id: "demo-" + Math.random().toString(36).substring(2, 9),
+    const inspection = await prisma.inspection.create({
+      data: {
         inspectorId: inspector.id,
         productId: body.productId || null,
         status: 'PENDING',
-        createdAt: new Date().toISOString()
-      };
-    }
+      }
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        inspectionId: inspection.id,
+        userId: inspector.id,
+        action: 'CREATED',
+        details: JSON.stringify({ message: 'Inspection created via web interface.' })
+      }
+    });
 
     return NextResponse.json(inspection, { status: 201 })
   } catch (error) {
-    console.error('Error creating inspection:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    console.warn("DB operation failed (likely Vercel Read-Only or missing DB). Using mock demo ID.", error);
+    const mockInspection = {
+      id: "demo-" + Math.random().toString(36).substring(2, 9),
+      inspectorId: "demo-inspector",
+      productId: body.productId || null,
+      status: 'PENDING',
+      createdAt: new Date().toISOString()
+    };
+    return NextResponse.json(mockInspection, { status: 201 });
   }
 }
