@@ -124,30 +124,29 @@ export default function NewInspectionPage() {
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label>Target Product (Optional)</Label>
-                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a product from database" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products.map(p => (
-                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select 
+                  value={selectedProductId} 
+                  onChange={(e) => setSelectedProductId(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-slate-700"
+                >
+                  <option value="" disabled>Select a product from database</option>
+                  {products.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="space-y-3">
                 <Label>Demo Scenario Override (SIH Presentation)</Label>
-                <Select value={demoScenario} onValueChange={setDemoScenario}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Demo Scenario" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="COMPLIANT">Fully Compliant</SelectItem>
-                    <SelectItem value="NON_COMPLIANT">Non-Compliant (Missing MRP)</SelectItem>
-                    <SelectItem value="REQUIRES_REVIEW">Requires Review (Low Confidence OCR)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select 
+                  value={demoScenario} 
+                  onChange={(e) => setDemoScenario(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 font-medium"
+                >
+                  <option value="COMPLIANT">Fully Compliant</option>
+                  <option value="NON_COMPLIANT">Non-Compliant (Missing MRP)</option>
+                  <option value="REQUIRES_REVIEW">Requires Review (Low Confidence OCR)</option>
+                </select>
               </div>
             </div>
 
