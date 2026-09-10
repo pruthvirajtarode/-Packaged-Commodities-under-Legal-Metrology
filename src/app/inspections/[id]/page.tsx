@@ -115,11 +115,11 @@ export default function InspectionResultPage() {
 
         <div className="md:col-span-3 space-y-6">
           <Tabs defaultValue="results">
-            <TabsList className="bg-white border-b border-slate-200 w-full justify-start rounded-none h-12 p-0 space-x-6">
-              <TabsTrigger value="results" className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none rounded-none bg-transparent px-2">Compliance Results</TabsTrigger>
-              <TabsTrigger value="extraction" className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none rounded-none bg-transparent px-2">Extracted Data & Verification</TabsTrigger>
-              <TabsTrigger value="images" className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none rounded-none bg-transparent px-2">Evidence Images</TabsTrigger>
-              <TabsTrigger value="audit" className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none rounded-none bg-transparent px-2">Audit Trail</TabsTrigger>
+            <TabsList className="bg-white border-b border-slate-200 w-full justify-start rounded-none h-12 p-0 space-x-6 mb-4">
+              <TabsTrigger value="results" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Compliance Results</TabsTrigger>
+              <TabsTrigger value="extraction" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Extracted Data & Verification</TabsTrigger>
+              <TabsTrigger value="images" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Evidence Images</TabsTrigger>
+              <TabsTrigger value="audit" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Audit Trail</TabsTrigger>
             </TabsList>
             
             <TabsContent value="results" className="pt-6 space-y-4">
