@@ -121,13 +121,23 @@ export default function InspectionResultPage() {
             <div className="relative flex items-center justify-center w-36 h-36">
               <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
                 <circle cx="72" cy="72" r="64" fill="transparent" stroke="#f1f5f9" strokeWidth="12" />
+                {/* Screen version with beautiful gradients */}
                 <circle 
                   cx="72" cy="72" r="64" fill="transparent" 
                   stroke={inspection.confidenceScore > 80 ? "url(#green-gradient)" : inspection.confidenceScore > 60 ? "url(#orange-gradient)" : "#ef4444"} 
                   strokeWidth="12" 
                   strokeDasharray={`${(inspection.confidenceScore / 100) * 402} 402`} 
                   strokeLinecap="round" 
-                  className="transition-all duration-1000 ease-out"
+                  className="transition-all duration-1000 ease-out print:hidden"
+                />
+                {/* Print fallback version with solid hex colors because browsers drop SVG gradients in PDFs */}
+                <circle 
+                  cx="72" cy="72" r="64" fill="transparent" 
+                  stroke={inspection.confidenceScore > 80 ? "#10b981" : inspection.confidenceScore > 60 ? "#f59e0b" : "#ef4444"} 
+                  strokeWidth="12" 
+                  strokeDasharray={`${(inspection.confidenceScore / 100) * 402} 402`} 
+                  strokeLinecap="round" 
+                  className="hidden print:block"
                 />
                 <defs>
                   <linearGradient id="green-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
