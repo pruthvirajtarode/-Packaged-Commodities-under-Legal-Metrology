@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, AlertTriangle, RefreshCcw, FileText, Activity, Save } from "lucide-react";
+import { CheckCircle, AlertTriangle, RefreshCcw, FileText, Activity, Save, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function InspectionResultPage() {
@@ -19,6 +18,7 @@ export default function InspectionResultPage() {
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [edits, setEdits] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState("results");
 
   useEffect(() => {
     fetch(`/api/inspections/${id}`)
@@ -29,7 +29,13 @@ export default function InspectionResultPage() {
       });
   }, [id]);
 
-  if (loading) return <div className="p-12 text-center text-slate-500">Loading inspection results...</div>;
+  if (loading) return (
+    <div className="flex h-[60vh] items-center justify-center flex-col space-y-4">
+      <div className="h-12 w-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="text-slate-500 font-medium">Loading inspection results...</div>
+    </div>
+  );
+  
   if (!inspection) return <div className="p-12 text-center text-slate-500">Inspection not found.</div>;
 
   const handleEditChange = (fieldId: string, value: string) => {
@@ -52,7 +58,6 @@ export default function InspectionResultPage() {
         description: "Human-in-the-loop correction saved to audit trail.",
       });
       
-      // Update local state to reflect change without reload
       setInspection((prev: any) => ({
         ...prev,
         extractedData: prev.extractedData.map((f: any) => 
@@ -64,172 +69,243 @@ export default function InspectionResultPage() {
     }
   };
 
+  const tabs = [
+    { id: 'results', label: 'Compliance Results' },
+    { id: 'extraction', label: 'Extracted Data & Verification' },
+    { id: 'images', label: 'Evidence Images' },
+    { id: 'audit', label: 'Audit Trail' }
+  ];
+
+  const getStatusColor = (status: string) => {
+    if (status === 'COMPLIANT') return 'bg-emerald-500/15 text-emerald-600 border-emerald-200';
+    if (status === 'NON_COMPLIANT') return 'bg-rose-500/15 text-rose-600 border-rose-200';
+    return 'bg-amber-500/15 text-amber-600 border-amber-200';
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start">
+    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Inspection #{inspection.id.slice(0,8)}</h2>
-            {inspection.status === 'COMPLIANT' && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 text-sm py-1">COMPLIANT</Badge>}
-            {inspection.status === 'NON_COMPLIANT' && <Badge className="bg-red-100 text-red-700 hover:bg-red-100 text-sm py-1">NON-COMPLIANT</Badge>}
-            {inspection.status === 'REQUIRES_REVIEW' && <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 text-sm py-1">REQUIRES REVIEW</Badge>}
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="h-8 w-8 text-orange-500" />
+              Inspection #{inspection.id.slice(0,8)}
+            </h2>
+            <Badge className={`px-3 py-1 rounded-full border text-sm font-bold shadow-sm ${getStatusColor(inspection.status)}`}>
+              {inspection.status.replace('_', ' ')}
+            </Badge>
           </div>
-          <p className="text-slate-500">Product: {inspection.product?.name || 'Unknown'}</p>
+          <p className="text-slate-500 font-medium">Product Reference: <span className="text-slate-900">{inspection.product?.name || 'Unknown'}</span></p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="border-slate-200 shadow-sm" onClick={() => router.push('/dashboard')}>
+        <div className="flex gap-3 mt-4 md:mt-0">
+          <Button variant="outline" className="border-slate-200 shadow-sm rounded-full px-6" onClick={() => router.push('/dashboard')}>
             Back to Dashboard
           </Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 shadow-sm" onClick={() => window.print()}>
+          <Button className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-md shadow-orange-500/20 rounded-full px-6 transition-all" onClick={() => window.print()}>
             <FileText className="mr-2 h-4 w-4" /> Generate PDF Report
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card className="md:col-span-1 shadow-sm border-slate-200 h-fit">
-          <CardHeader>
-            <CardTitle className="text-lg">AI Confidence Score</CardTitle>
+      <div className="grid gap-8 md:grid-cols-4">
+        {/* Premium AI Score Card */}
+        <Card className="md:col-span-1 shadow-lg shadow-slate-200/50 border-slate-100 rounded-2xl overflow-hidden h-fit bg-white">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
+            <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Activity className="h-5 w-5 text-blue-500" />
+              AI Confidence
+            </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center py-6">
-            <div className="relative flex items-center justify-center w-32 h-32">
-              <svg className="w-full h-full transform -rotate-90">
-                <circle cx="64" cy="64" r="56" fill="transparent" stroke="#f1f5f9" strokeWidth="12" />
+          <CardContent className="flex flex-col items-center justify-center py-10 relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+            <div className="relative flex items-center justify-center w-36 h-36">
+              <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
+                <circle cx="72" cy="72" r="64" fill="transparent" stroke="#f1f5f9" strokeWidth="12" />
                 <circle 
-                  cx="64" cy="64" r="56" fill="transparent" 
-                  stroke={inspection.confidenceScore > 80 ? "#22c55e" : inspection.confidenceScore > 60 ? "#f97316" : "#ef4444"} 
+                  cx="72" cy="72" r="64" fill="transparent" 
+                  stroke={inspection.confidenceScore > 80 ? "url(#green-gradient)" : inspection.confidenceScore > 60 ? "url(#orange-gradient)" : "#ef4444"} 
                   strokeWidth="12" 
-                  strokeDasharray={`${(inspection.confidenceScore / 100) * 351} 351`} 
+                  strokeDasharray={`${(inspection.confidenceScore / 100) * 402} 402`} 
                   strokeLinecap="round" 
+                  className="transition-all duration-1000 ease-out"
                 />
+                <defs>
+                  <linearGradient id="green-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#10b981" />
+                    <stop offset="100%" stopColor="#3b82f6" />
+                  </linearGradient>
+                  <linearGradient id="orange-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#f59e0b" />
+                    <stop offset="100%" stopColor="#ef4444" />
+                  </linearGradient>
+                </defs>
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-3xl font-bold text-slate-900">{inspection.confidenceScore}%</span>
+                <span className="text-4xl font-black text-slate-800 tracking-tighter">{inspection.confidenceScore}%</span>
               </div>
             </div>
-            <p className="text-sm text-center text-slate-500 mt-6">
-              {inspection.confidenceScore < 85 ? "Low confidence. Human verification recommended." : "High confidence in OCR extraction."}
+            <p className="text-sm text-center text-slate-500 mt-8 font-medium px-4">
+              {inspection.confidenceScore < 85 ? "Low confidence. Human verification recommended." : "High confidence in real-time OCR extraction."}
             </p>
           </CardContent>
         </Card>
 
+        {/* Main Content Area */}
         <div className="md:col-span-3 space-y-6">
-          <Tabs defaultValue="results">
-            <TabsList className="bg-white border-b border-slate-200 w-full justify-start rounded-none h-12 p-0 space-x-6 mb-4">
-              <TabsTrigger value="results" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Compliance Results</TabsTrigger>
-              <TabsTrigger value="extraction" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Extracted Data & Verification</TabsTrigger>
-              <TabsTrigger value="images" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Evidence Images</TabsTrigger>
-              <TabsTrigger value="audit" className="data-active:border-b-2 data-active:border-orange-500 data-active:text-orange-600 data-active:shadow-none rounded-none bg-transparent px-2 pb-2 h-full text-slate-600">Audit Trail</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="results" className="pt-6 space-y-4">
-              {inspection.results?.map((res: any) => (
-                <Card key={res.id} className="shadow-sm border-slate-200">
-                  <div className="flex items-start p-5 gap-4">
-                    <div className="mt-1">
-                      {res.status === 'PASS' && <CheckCircle className="h-6 w-6 text-green-500" />}
-                      {res.status === 'FAIL' && <AlertTriangle className="h-6 w-6 text-red-500" />}
-                      {res.status === 'REVIEW' && <RefreshCcw className="h-6 w-6 text-orange-500" />}
+          {/* Custom Tabs List */}
+          <div className="flex space-x-1 border-b border-slate-200 bg-white px-2 pt-2 rounded-t-2xl shadow-sm">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-3 text-sm font-semibold transition-all relative outline-none ${
+                  activeTab === tab.id 
+                    ? 'text-orange-600' 
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-lg'
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-t-full shadow-[0_-2px_10px_rgba(249,115,22,0.5)]"></div>
+                )}
+              </button>
+            ))}
+          </div>
+          
+          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px]">
+            {/* Results Tab */}
+            {activeTab === 'results' && (
+              <div className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300">
+                {inspection.results?.map((res: any) => (
+                  <div key={res.id} className="group flex items-start p-5 gap-5 rounded-xl border border-slate-100 bg-white hover:shadow-md hover:border-slate-200 transition-all duration-200">
+                    <div className="mt-1 p-2 rounded-full bg-slate-50 group-hover:bg-white transition-colors shadow-sm">
+                      {res.status === 'PASS' && <CheckCircle className="h-6 w-6 text-emerald-500" />}
+                      {res.status === 'FAIL' && <AlertTriangle className="h-6 w-6 text-rose-500" />}
+                      {res.status === 'REVIEW' && <RefreshCcw className="h-6 w-6 text-amber-500" />}
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-base font-bold text-slate-900">{res.rule.title}</h4>
-                      <p className="text-sm text-slate-600 mt-1">{res.explanation}</p>
+                      <h4 className="text-lg font-bold text-slate-800">{res.rule.title}</h4>
+                      <p className="text-sm text-slate-600 mt-1 font-medium">{res.explanation}</p>
                       
-                      <div className="mt-4 flex gap-4 text-xs">
-                        <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded">Rule: {res.rule.ruleCode}</span>
-                        <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded">Field: {res.evidenceField}</span>
+                      <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold">
+                        <span className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-md border border-slate-200">Rule: {res.rule.ruleCode}</span>
+                        <span className="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-md border border-slate-200">Field: {res.evidenceField}</span>
                         {res.confidence > 0 && (
-                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">AI Confidence: {Math.round(res.confidence)}%</span>
+                          <span className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md border border-blue-100 flex items-center gap-1">
+                            <Activity className="h-3 w-3" />
+                            AI Confidence: {Math.round(res.confidence)}%
+                          </span>
                         )}
                       </div>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </TabsContent>
+                ))}
+              </div>
+            )}
 
-            <TabsContent value="extraction" className="pt-6">
-              <Card className="shadow-sm border-slate-200">
-                <CardHeader>
-                  <CardTitle>Human-in-the-loop Verification</CardTitle>
-                  <CardDescription>Review and correct data extracted by the AI.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+            {/* Extraction Tab */}
+            {activeTab === 'extraction' && (
+              <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
+                <div className="mb-6 pb-4 border-b">
+                  <h3 className="text-xl font-bold text-slate-800">Human-in-the-loop Verification</h3>
+                  <p className="text-slate-500 text-sm mt-1">Review and correct data extracted by the AI in real-time.</p>
+                </div>
+                
+                <div className="space-y-4">
                   {inspection.extractedData?.map((field: any) => (
-                    <div key={field.id} className="grid grid-cols-12 gap-4 items-center border-b pb-4 last:border-0 last:pb-0">
-                      <div className="col-span-3 font-medium text-sm text-slate-900 capitalize">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                      <div className="md:col-span-3 font-bold text-sm text-slate-800 capitalize">
                         {field.fieldKey.replace(/([A-Z])/g, ' $1').trim()}
                       </div>
-                      <div className="col-span-4 relative">
-                        <Label className="text-xs text-slate-500 mb-1 block">AI Extracted Value</Label>
-                        <div className="p-2 bg-slate-50 border rounded-md text-sm text-slate-700 font-mono flex justify-between">
-                          <span>{field.aiValue || 'Not detected'}</span>
-                          <span className={`text-xs ${field.confidence < 85 ? 'text-orange-500' : 'text-green-600'}`}>
+                      <div className="md:col-span-4 relative">
+                        <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">AI Extracted Value</Label>
+                        <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-mono flex justify-between items-center shadow-sm">
+                          <span className="font-semibold">{field.aiValue || 'Not detected'}</span>
+                          <span className={`text-xs font-black px-2 py-0.5 rounded-full ${field.confidence < 85 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
                             {Math.round(field.confidence)}%
                           </span>
                         </div>
                       </div>
-                      <div className="col-span-4">
-                        <Label className="text-xs text-slate-500 mb-1 block">Human Corrected Value</Label>
+                      <div className="md:col-span-4">
+                        <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">Human Corrected Value</Label>
                         <Input 
                           defaultValue={field.humanValue || field.aiValue} 
                           onChange={(e) => handleEditChange(field.id, e.target.value)}
-                          className={field.isCorrected ? "border-green-300 bg-green-50" : ""}
+                          className={`font-mono shadow-sm ${field.isCorrected ? "border-emerald-400 bg-emerald-50 focus-visible:ring-emerald-500" : ""}`}
                         />
                       </div>
-                      <div className="col-span-1 flex justify-end mt-5">
-                        <Button variant="ghost" size="icon" onClick={() => handleSaveCorrection(field.id)}>
-                          <Save className="h-4 w-4 text-blue-600" />
+                      <div className="md:col-span-1 flex justify-end mt-5">
+                        <Button size="icon" className="bg-white border hover:bg-blue-50 border-slate-200 text-blue-600 shadow-sm rounded-lg" onClick={() => handleSaveCorrection(field.id)}>
+                          <Save className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                   ))}
                   {(!inspection.extractedData || inspection.extractedData.length === 0) && (
-                    <p className="text-slate-500 text-sm">No fields were extracted.</p>
+                    <div className="p-8 text-center text-slate-500 border-2 border-dashed rounded-xl">No fields were extracted for this inspection.</div>
                   )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
+              </div>
+            )}
 
-            <TabsContent value="images" className="pt-6">
-              <div className="grid grid-cols-2 gap-6">
+            {/* Images Tab */}
+            {activeTab === 'images' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-right-4 fade-in duration-300">
                 {inspection.images?.map((img: any) => (
-                  <Card key={img.id} className="overflow-hidden">
-                    <div className="bg-slate-100 p-2 flex justify-between items-center text-sm font-semibold text-slate-700">
-                      <span>{img.type} Label</span>
+                  <div key={img.id} className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
+                    <div className="bg-slate-800 p-3 flex justify-between items-center text-sm font-bold text-white">
+                      <span>{img.type} SCAN</span>
+                      <Badge className="bg-white/20 hover:bg-white/30 border-none">HD</Badge>
                     </div>
-                    <img src={img.url} className="w-full h-auto object-contain bg-slate-50" alt="Evidence" />
-                  </Card>
+                    <div className="relative p-4 flex justify-center items-center bg-checkered">
+                      <img src={img.url} className="max-h-64 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105" alt="Evidence" />
+                    </div>
+                  </div>
                 ))}
                 {(!inspection.images || inspection.images.length === 0) && (
-                  <p className="text-slate-500">No images attached to this inspection.</p>
+                  <div className="col-span-2 p-12 text-center text-slate-500 border-2 border-dashed rounded-xl bg-slate-50">
+                    No images were captured during this scan.
+                  </div>
                 )}
               </div>
-            </TabsContent>
+            )}
 
-            <TabsContent value="audit" className="pt-6">
-              <Card className="shadow-sm border-slate-200">
-                <CardContent className="pt-6">
-                  <div className="relative border-l-2 border-slate-200 ml-3 space-y-8">
-                    {inspection.auditLogs?.map((log: any) => (
-                      <div key={log.id} className="relative pl-6">
-                        <div className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full bg-slate-300 border-2 border-white"></div>
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1">
-                          <h5 className="font-semibold text-sm text-slate-900">{log.action.replace(/_/g, ' ')}</h5>
-                          <span className="text-xs text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
+            {/* Audit Trail Tab */}
+            {activeTab === 'audit' && (
+              <div className="animate-in slide-in-from-right-4 fade-in duration-300">
+                <div className="relative border-l-2 border-slate-200 ml-4 py-4 space-y-8">
+                  {inspection.auditLogs?.map((log: any) => (
+                    <div key={log.id} className="relative pl-8 group">
+                      <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-slate-200 border-4 border-white group-hover:bg-orange-500 group-hover:border-orange-100 transition-colors"></div>
+                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                          <h5 className="font-bold text-sm text-slate-900 tracking-tight uppercase">{log.action.replace(/_/g, ' ')}</h5>
+                          <span className="text-xs font-medium text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
                         </div>
-                        <p className="text-sm text-slate-600">
-                          {log.user?.name} &bull; {JSON.parse(log.details || '{}').message || log.details}
+                        <p className="text-sm text-slate-600 font-medium">
+                          <span className="font-semibold text-slate-800">{log.user?.name || 'System'}</span> &bull; {JSON.parse(log.details || '{}').message || log.details}
                         </p>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                    </div>
+                  ))}
+                  {(!inspection.auditLogs || inspection.auditLogs.length === 0) && (
+                    <div className="pl-8 text-slate-500 text-sm">No audit logs available.</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      
+      {/* Add a subtle checkered pattern for image backgrounds */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .bg-checkered {
+          background-image: linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%);
+          background-size: 20px 20px;
+          background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+      `}} />
     </div>
   );
 }
