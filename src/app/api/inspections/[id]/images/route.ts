@@ -4,7 +4,10 @@ import { prisma } from '@/lib/db'
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const { url, type } = await request.json()
-    // url could be a data URI for the demo
+    
+    if (params.id.startsWith('demo-')) {
+      return NextResponse.json({ id: 'demo-img-1', inspectionId: params.id, url, type: type || 'FRONT' }, { status: 201 })
+    }
 
     const image = await prisma.inspectionImage.create({
       data: {

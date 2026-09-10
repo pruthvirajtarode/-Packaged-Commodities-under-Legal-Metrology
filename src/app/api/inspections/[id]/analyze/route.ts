@@ -6,6 +6,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const { extractedFields, demoMode = false } = await request.json()
     // extractedFields is an array of { fieldKey, value, confidence }
 
+    if (params.id.startsWith('demo-')) {
+      return NextResponse.json({ success: true, inspection: { id: params.id, status: demoMode ? 'NON_COMPLIANT' : 'COMPLIANT', score: demoMode ? 50 : 100, confidenceScore: 92 } })
+    }
+
     const inspection = await prisma.inspection.findUnique({
       where: { id: params.id },
       include: { product: true } // product might be null if not selected
