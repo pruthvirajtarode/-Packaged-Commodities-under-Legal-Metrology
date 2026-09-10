@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-slate-50 antialiased`}>
         <TooltipProvider>
-          <div className="flex h-screen overflow-hidden">
+          <div className="flex flex-col md:flex-row h-screen overflow-hidden">
             <Sidebar />
             <div className="flex-1 overflow-auto bg-slate-50 relative">
               <main className="mx-auto max-w-7xl p-6 md:p-8">
