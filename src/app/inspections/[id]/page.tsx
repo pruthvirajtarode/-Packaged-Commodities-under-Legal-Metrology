@@ -107,7 +107,7 @@ export default function InspectionResultPage() {
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-4 print:grid-cols-1 print:gap-4">
+      <div className="grid gap-8 md:grid-cols-4 print:flex print:flex-col print:gap-8">
         {/* Premium AI Score Card */}
         <Card className="md:col-span-1 shadow-lg shadow-slate-200/50 border-slate-100 rounded-2xl overflow-hidden h-fit bg-white print:shadow-none print:border-slate-200">
           <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
@@ -133,11 +133,11 @@ export default function InspectionResultPage() {
                 {/* Print fallback version with solid hex colors because browsers drop SVG gradients in PDFs */}
                 <circle 
                   cx="72" cy="72" r="64" fill="transparent" 
-                  stroke={inspection.confidenceScore > 80 ? "#10b981" : inspection.confidenceScore > 60 ? "#f59e0b" : "#ef4444"} 
                   strokeWidth="12" 
                   strokeDasharray={`${(inspection.confidenceScore / 100) * 402} 402`} 
                   strokeLinecap="round" 
                   className="hidden print:block"
+                  style={{ stroke: inspection.confidenceScore > 80 ? "#10b981" : inspection.confidenceScore > 60 ? "#f59e0b" : "#ef4444" }}
                 />
                 <defs>
                   <linearGradient id="green-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -161,7 +161,7 @@ export default function InspectionResultPage() {
         </Card>
 
         {/* Main Content Area */}
-        <div className="md:col-span-3 space-y-6">
+        <div className="md:col-span-3 space-y-6 print:space-y-8">
           {/* Custom Tabs List */}
           <div className="flex space-x-1 border-b border-slate-200 bg-white px-2 pt-2 rounded-t-2xl shadow-sm print:hidden">
             {tabs.map((tab) => (
@@ -182,7 +182,7 @@ export default function InspectionResultPage() {
             ))}
           </div>
           
-          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px] print:shadow-none print:border-none print:p-0 print:space-y-8">
+          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px] print:min-h-0 print:shadow-none print:border-none print:p-0 print:space-y-8">
             
             {/* Results Tab */}
             <div className={`${activeTab === 'results' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300`}>
