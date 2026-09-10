@@ -51,6 +51,10 @@ export default function NewInspectionPage() {
         body: JSON.stringify({ productId: selectedProductId })
       });
       const inspection = await resCreate.json();
+      
+      if (!resCreate.ok || !inspection.id) {
+        throw new Error(inspection.error || "Failed to create inspection record");
+      }
 
       // 2. Save Image (Mocked as data URI for demo)
       setProgressStatus("Uploading high-resolution image...");
