@@ -83,8 +83,8 @@ export default function InspectionResultPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div className="space-y-8 pb-12 animate-in fade-in duration-500" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 print:shadow-none print:border-none print:p-0">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
@@ -97,7 +97,7 @@ export default function InspectionResultPage() {
           </div>
           <p className="text-slate-500 font-medium">Product Reference: <span className="text-slate-900">{inspection.product?.name || 'Unknown'}</span></p>
         </div>
-        <div className="flex gap-3 mt-4 md:mt-0">
+        <div className="flex gap-3 mt-4 md:mt-0 print:hidden">
           <Button variant="outline" className="border-slate-200 shadow-sm rounded-full px-6" onClick={() => router.push('/dashboard')}>
             Back to Dashboard
           </Button>
@@ -107,9 +107,9 @@ export default function InspectionResultPage() {
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-4">
+      <div className="grid gap-8 md:grid-cols-4 print:grid-cols-1 print:gap-4">
         {/* Premium AI Score Card */}
-        <Card className="md:col-span-1 shadow-lg shadow-slate-200/50 border-slate-100 rounded-2xl overflow-hidden h-fit bg-white">
+        <Card className="md:col-span-1 shadow-lg shadow-slate-200/50 border-slate-100 rounded-2xl overflow-hidden h-fit bg-white print:shadow-none print:border-slate-200">
           <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
             <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <Activity className="h-5 w-5 text-blue-500" />
@@ -117,7 +117,7 @@ export default function InspectionResultPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center py-10 relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl print:hidden"></div>
             <div className="relative flex items-center justify-center w-36 h-36">
               <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
                 <circle cx="72" cy="72" r="64" fill="transparent" stroke="#f1f5f9" strokeWidth="12" />
@@ -153,7 +153,7 @@ export default function InspectionResultPage() {
         {/* Main Content Area */}
         <div className="md:col-span-3 space-y-6">
           {/* Custom Tabs List */}
-          <div className="flex space-x-1 border-b border-slate-200 bg-white px-2 pt-2 rounded-t-2xl shadow-sm">
+          <div className="flex space-x-1 border-b border-slate-200 bg-white px-2 pt-2 rounded-t-2xl shadow-sm print:hidden">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -172,12 +172,14 @@ export default function InspectionResultPage() {
             ))}
           </div>
           
-          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px]">
+          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px] print:shadow-none print:border-none print:p-0 print:space-y-8">
+            
             {/* Results Tab */}
-            {activeTab === 'results' && (
-              <div className="space-y-4 animate-in slide-in-from-right-4 fade-in duration-300">
+            <div className={`${activeTab === 'results' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300`}>
+              <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Compliance Results</h3>
+              <div className="space-y-4">
                 {inspection.results?.map((res: any) => (
-                  <div key={res.id} className="group flex items-start p-5 gap-5 rounded-xl border border-slate-100 bg-white hover:shadow-md hover:border-slate-200 transition-all duration-200">
+                  <div key={res.id} className="group flex items-start p-5 gap-5 rounded-xl border border-slate-100 bg-white hover:shadow-md hover:border-slate-200 transition-all duration-200 print:break-inside-avoid print:border-slate-200">
                     <div className="mt-1 p-2 rounded-full bg-slate-50 group-hover:bg-white transition-colors shadow-sm">
                       {res.status === 'PASS' && <CheckCircle className="h-6 w-6 text-emerald-500" />}
                       {res.status === 'FAIL' && <AlertTriangle className="h-6 w-6 text-rose-500" />}
@@ -201,61 +203,60 @@ export default function InspectionResultPage() {
                   </div>
                 ))}
               </div>
-            )}
+            </div>
 
             {/* Extraction Tab */}
-            {activeTab === 'extraction' && (
-              <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-300">
-                <div className="mb-6 pb-4 border-b">
-                  <h3 className="text-xl font-bold text-slate-800">Human-in-the-loop Verification</h3>
-                  <p className="text-slate-500 text-sm mt-1">Review and correct data extracted by the AI in real-time.</p>
-                </div>
-                
-                <div className="space-y-4">
-                  {inspection.extractedData?.map((field: any) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                      <div className="md:col-span-3 font-bold text-sm text-slate-800 capitalize">
-                        {field.fieldKey.replace(/([A-Z])/g, ' $1').trim()}
-                      </div>
-                      <div className="md:col-span-4 relative">
-                        <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">AI Extracted Value</Label>
-                        <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-mono flex justify-between items-center shadow-sm">
-                          <span className="font-semibold">{field.aiValue || 'Not detected'}</span>
-                          <span className={`text-xs font-black px-2 py-0.5 rounded-full ${field.confidence < 85 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                            {Math.round(field.confidence)}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="md:col-span-4">
-                        <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">Human Corrected Value</Label>
-                        <Input 
-                          defaultValue={field.humanValue || field.aiValue} 
-                          onChange={(e) => handleEditChange(field.id, e.target.value)}
-                          className={`font-mono shadow-sm ${field.isCorrected ? "border-emerald-400 bg-emerald-50 focus-visible:ring-emerald-500" : ""}`}
-                        />
-                      </div>
-                      <div className="md:col-span-1 flex justify-end mt-5">
-                        <Button size="icon" className="bg-white border hover:bg-blue-50 border-slate-200 text-blue-600 shadow-sm rounded-lg" onClick={() => handleSaveCorrection(field.id)}>
-                          <Save className="h-4 w-4" />
-                        </Button>
+            <div className={`${activeTab === 'extraction' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+              <div className="mb-6 pb-4 border-b">
+                <h3 className="text-xl font-bold text-slate-800">Extracted Data & Verification</h3>
+                <p className="text-slate-500 text-sm mt-1 print:hidden">Review and correct data extracted by the AI in real-time.</p>
+              </div>
+              
+              <div className="space-y-4">
+                {inspection.extractedData?.map((field: any) => (
+                  <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors print:break-inside-avoid print:bg-white print:border-slate-200">
+                    <div className="md:col-span-3 font-bold text-sm text-slate-800 capitalize">
+                      {field.fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                    </div>
+                    <div className="md:col-span-4 relative">
+                      <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">AI Extracted Value</Label>
+                      <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-mono flex justify-between items-center shadow-sm">
+                        <span className="font-semibold">{field.aiValue || 'Not detected'}</span>
+                        <span className={`text-xs font-black px-2 py-0.5 rounded-full ${field.confidence < 85 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                          {Math.round(field.confidence)}%
+                        </span>
                       </div>
                     </div>
-                  ))}
-                  {(!inspection.extractedData || inspection.extractedData.length === 0) && (
-                    <div className="p-8 text-center text-slate-500 border-2 border-dashed rounded-xl">No fields were extracted for this inspection.</div>
-                  )}
-                </div>
+                    <div className="md:col-span-4">
+                      <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">Human Corrected Value</Label>
+                      <Input 
+                        defaultValue={field.humanValue || field.aiValue} 
+                        onChange={(e) => handleEditChange(field.id, e.target.value)}
+                        className={`font-mono shadow-sm ${field.isCorrected ? "border-emerald-400 bg-emerald-50 focus-visible:ring-emerald-500" : ""}`}
+                      />
+                    </div>
+                    <div className="md:col-span-1 flex justify-end mt-5 print:hidden">
+                      <Button size="icon" className="bg-white border hover:bg-blue-50 border-slate-200 text-blue-600 shadow-sm rounded-lg" onClick={() => handleSaveCorrection(field.id)}>
+                        <Save className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {(!inspection.extractedData || inspection.extractedData.length === 0) && (
+                  <div className="p-8 text-center text-slate-500 border-2 border-dashed rounded-xl">No fields were extracted for this inspection.</div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Images Tab */}
-            {activeTab === 'images' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-right-4 fade-in duration-300">
+            <div className={`${activeTab === 'images' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+              <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Evidence Images</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {inspection.images?.map((img: any) => (
-                  <div key={img.id} className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
-                    <div className="bg-slate-800 p-3 flex justify-between items-center text-sm font-bold text-white">
+                  <div key={img.id} className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group print:break-inside-avoid">
+                    <div className="bg-slate-800 p-3 flex justify-between items-center text-sm font-bold text-white print:bg-slate-100 print:text-slate-800">
                       <span>{img.type} SCAN</span>
-                      <Badge className="bg-white/20 hover:bg-white/30 border-none">HD</Badge>
+                      <Badge className="bg-white/20 hover:bg-white/30 border-none print:hidden">HD</Badge>
                     </div>
                     <div className="relative p-4 flex justify-center items-center bg-checkered">
                       <img src={img.url} className="max-h-64 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105" alt="Evidence" />
@@ -268,32 +269,32 @@ export default function InspectionResultPage() {
                   </div>
                 )}
               </div>
-            )}
+            </div>
 
             {/* Audit Trail Tab */}
-            {activeTab === 'audit' && (
-              <div className="animate-in slide-in-from-right-4 fade-in duration-300">
-                <div className="relative border-l-2 border-slate-200 ml-4 py-4 space-y-8">
-                  {inspection.auditLogs?.map((log: any) => (
-                    <div key={log.id} className="relative pl-8 group">
-                      <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-slate-200 border-4 border-white group-hover:bg-orange-500 group-hover:border-orange-100 transition-colors"></div>
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md transition-shadow">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                          <h5 className="font-bold text-sm text-slate-900 tracking-tight uppercase">{log.action.replace(/_/g, ' ')}</h5>
-                          <span className="text-xs font-medium text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
-                        </div>
-                        <p className="text-sm text-slate-600 font-medium">
-                          <span className="font-semibold text-slate-800">{log.user?.name || 'System'}</span> &bull; {JSON.parse(log.details || '{}').message || log.details}
-                        </p>
+            <div className={`${activeTab === 'audit' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+              <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Audit Trail</h3>
+              <div className="relative border-l-2 border-slate-200 ml-4 py-4 space-y-8">
+                {inspection.auditLogs?.map((log: any) => (
+                  <div key={log.id} className="relative pl-8 group print:break-inside-avoid">
+                    <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-slate-200 border-4 border-white group-hover:bg-orange-500 group-hover:border-orange-100 transition-colors"></div>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md transition-shadow print:border-slate-200 print:bg-white">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                        <h5 className="font-bold text-sm text-slate-900 tracking-tight uppercase">{log.action.replace(/_/g, ' ')}</h5>
+                        <span className="text-xs font-medium text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
                       </div>
+                      <p className="text-sm text-slate-600 font-medium">
+                        <span className="font-semibold text-slate-800">{log.user?.name || 'System'}</span> &bull; {JSON.parse(log.details || '{}').message || log.details}
+                      </p>
                     </div>
-                  ))}
-                  {(!inspection.auditLogs || inspection.auditLogs.length === 0) && (
-                    <div className="pl-8 text-slate-500 text-sm">No audit logs available.</div>
-                  )}
-                </div>
+                  </div>
+                ))}
+                {(!inspection.auditLogs || inspection.auditLogs.length === 0) && (
+                  <div className="pl-8 text-slate-500 text-sm">No audit logs available.</div>
+                )}
               </div>
-            )}
+            </div>
+
           </div>
         </div>
       </div>

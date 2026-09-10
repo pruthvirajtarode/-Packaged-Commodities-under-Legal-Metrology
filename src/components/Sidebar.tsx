@@ -27,7 +27,7 @@ export function Sidebar() {
   if (pathname === '/') return null; // Don't show sidebar on landing page
 
   return (
-    <div className="flex md:flex-col bg-slate-900 text-white w-full md:w-64 md:h-full border-b md:border-r border-slate-800 shadow-sm z-50 shrink-0">
+    <div className="flex md:flex-col bg-slate-900 text-white w-full md:w-64 md:h-full border-b md:border-r border-slate-800 shadow-sm z-50 shrink-0 print:hidden">
       <div className="flex md:flex-col flex-1 px-3 py-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
         <Link href="/" className="flex items-center pl-2 md:pl-3 md:mb-14 mr-6 md:mr-0 gap-2 shrink-0 my-auto md:my-0 py-2 md:py-0">
           <div className="bg-orange-500 p-1.5 rounded-lg">
