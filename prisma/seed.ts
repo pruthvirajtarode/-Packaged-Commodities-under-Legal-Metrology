@@ -21,7 +21,7 @@ async function main() {
     update: {},
     create: {
       email: 'inspector@packsure.ai',
-      name: 'Ramesh Kumar (Inspector)',
+      name: 'Nandini Tarode (Inspector)',
       role: 'INSPECTOR',
     },
   })
