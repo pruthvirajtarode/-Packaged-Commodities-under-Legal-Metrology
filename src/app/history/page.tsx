@@ -17,15 +17,27 @@ export default function HistoryPage() {
     fetch('/api/inspections?limit=100')
       .then(res => res.json())
       .then(data => {
-        setInspections(data);
+        if (Array.isArray(data)) {
+          setInspections(data);
+        } else {
+          console.error("Expected array from API, got:", data);
+          setInspections([]);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching inspections:", err);
+        setInspections([]);
         setLoading(false);
       });
   }, []);
 
-  const filtered = inspections.filter(i => 
-    i.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
-    i.id.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = (Array.isArray(inspections) ? inspections : []).filter(i => {
+    const productName = i.product?.name?.toLowerCase() || '';
+    const inspectionId = i.id?.toLowerCase() || '';
+    const searchTerm = search.toLowerCase();
+    return productName.includes(searchTerm) || inspectionId.includes(searchTerm);
+  });
 
   return (
     <div className="space-y-6">
@@ -70,8 +82,8 @@ export default function HistoryPage() {
                 )}
                 {filtered.map(i => (
                   <tr key={i.id} className="border-b hover:bg-slate-50 transition">
-                    <td className="px-6 py-4 font-mono text-xs">{i.id.slice(0,8)}</td>
-                    <td className="px-6 py-4 text-slate-600">{new Date(i.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 font-mono text-xs">{i.id ? i.id.toString().slice(0,8) : 'N/A'}</td>
+                    <td className="px-6 py-4 text-slate-600">{i.createdAt ? new Date(i.createdAt).toLocaleDateString() : 'N/A'}</td>
                     <td className="px-6 py-4 font-medium text-slate-900">{i.product?.name || 'N/A'}</td>
                     <td className="px-6 py-4 text-slate-600">{i.inspector?.name}</td>
                     <td className="px-6 py-4">
