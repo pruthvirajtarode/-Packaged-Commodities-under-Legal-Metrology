@@ -182,15 +182,15 @@ export default function InspectionResultPage() {
             ))}
           </div>
           
-          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px] print:min-h-0 print:shadow-none print:border-none print:p-0 print:space-y-8">
+          <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-slate-100 p-6 min-h-[400px] print:min-h-0 print:shadow-none print:border-none print:p-0 print:space-y-8 print:bg-transparent">
             
             {/* Results Tab */}
-            <div className={`${activeTab === 'results' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300`}>
+            <div className={`${activeTab === 'results' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:animate-none print:transform-none print:opacity-100`}>
               <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Compliance Results</h3>
               <div className="space-y-4">
                 {inspection.results?.map((res: any) => (
-                  <div key={res.id} className="group flex items-start p-5 gap-5 rounded-xl border border-slate-100 bg-white hover:shadow-md hover:border-slate-200 transition-all duration-200 print:break-inside-avoid print:border-slate-200">
-                    <div className="mt-1 p-2 rounded-full bg-slate-50 group-hover:bg-white transition-colors shadow-sm">
+                  <div key={res.id} className="group flex items-start p-5 gap-5 rounded-xl border border-slate-100 bg-white hover:shadow-md hover:border-slate-200 transition-all duration-200 print:break-inside-avoid print:border-slate-200 print:shadow-none">
+                    <div className="mt-1 p-2 rounded-full bg-slate-50 group-hover:bg-white transition-colors shadow-sm print:shadow-none">
                       {res.status === 'PASS' && <CheckCircle className="h-6 w-6 text-emerald-500" />}
                       {res.status === 'FAIL' && <AlertTriangle className="h-6 w-6 text-rose-500" />}
                       {res.status === 'REVIEW' && <RefreshCcw className="h-6 w-6 text-amber-500" />}
@@ -216,7 +216,7 @@ export default function InspectionResultPage() {
             </div>
 
             {/* Extraction Tab */}
-            <div className={`${activeTab === 'extraction' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+            <div className={`${activeTab === 'extraction' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:animate-none print:transform-none print:opacity-100 print:mt-10`}>
               <div className="mb-6 pb-4 border-b">
                 <h3 className="text-xl font-bold text-slate-800">Extracted Data & Verification</h3>
                 <p className="text-slate-500 text-sm mt-1 print:hidden">Review and correct data extracted by the AI in real-time.</p>
@@ -230,7 +230,7 @@ export default function InspectionResultPage() {
                     </div>
                     <div className="md:col-span-4 relative">
                       <Label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1.5 block">AI Extracted Value</Label>
-                      <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-mono flex justify-between items-center shadow-sm">
+                      <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 font-mono flex justify-between items-center shadow-sm print:shadow-none">
                         <span className="font-semibold">{field.aiValue || 'Not detected'}</span>
                         <span className={`text-xs font-black px-2 py-0.5 rounded-full ${field.confidence < 85 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
                           {Math.round(field.confidence)}%
@@ -242,7 +242,7 @@ export default function InspectionResultPage() {
                       <Input 
                         defaultValue={field.humanValue || field.aiValue} 
                         onChange={(e) => handleEditChange(field.id, e.target.value)}
-                        className={`font-mono shadow-sm ${field.isCorrected ? "border-emerald-400 bg-emerald-50 focus-visible:ring-emerald-500" : ""}`}
+                        className={`font-mono shadow-sm print:shadow-none ${field.isCorrected ? "border-emerald-400 bg-emerald-50 focus-visible:ring-emerald-500" : ""}`}
                       />
                     </div>
                     <div className="md:col-span-1 flex justify-end mt-5 print:hidden">
@@ -259,17 +259,17 @@ export default function InspectionResultPage() {
             </div>
 
             {/* Images Tab */}
-            <div className={`${activeTab === 'images' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+            <div className={`${activeTab === 'images' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:animate-none print:transform-none print:opacity-100 print:mt-10`}>
               <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Evidence Images</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {inspection.images?.map((img: any) => (
-                  <div key={img.id} className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group print:break-inside-avoid">
+                  <div key={img.id} className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group print:break-inside-avoid print:shadow-none">
                     <div className="bg-slate-800 p-3 flex justify-between items-center text-sm font-bold text-white print:bg-slate-100 print:text-slate-800">
                       <span>{img.type} SCAN</span>
                       <Badge className="bg-white/20 hover:bg-white/30 border-none print:hidden">HD</Badge>
                     </div>
-                    <div className="relative p-4 flex justify-center items-center bg-checkered">
-                      <img src={img.url} className="max-h-64 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105" alt="Evidence" />
+                    <div className="relative p-4 flex justify-center items-center bg-checkered print:bg-transparent">
+                      <img src={img.url} className="max-h-64 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105 print:transform-none" alt="Evidence" />
                     </div>
                   </div>
                 ))}
@@ -282,13 +282,13 @@ export default function InspectionResultPage() {
             </div>
 
             {/* Audit Trail Tab */}
-            <div className={`${activeTab === 'audit' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:mt-10`}>
+            <div className={`${activeTab === 'audit' ? 'block' : 'hidden print:block'} animate-in slide-in-from-right-4 fade-in duration-300 print:animate-none print:transform-none print:opacity-100 print:mt-10`}>
               <h3 className="text-xl font-bold text-slate-800 hidden print:block mb-4 pb-2 border-b">Audit Trail</h3>
-              <div className="relative border-l-2 border-slate-200 ml-4 py-4 space-y-8">
+              <div className="relative border-l-2 border-slate-200 ml-4 py-4 space-y-8 print:border-none print:ml-0">
                 {inspection.auditLogs?.map((log: any) => (
-                  <div key={log.id} className="relative pl-8 group print:break-inside-avoid">
-                    <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-slate-200 border-4 border-white group-hover:bg-orange-500 group-hover:border-orange-100 transition-colors"></div>
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md transition-shadow print:border-slate-200 print:bg-white">
+                  <div key={log.id} className="relative pl-8 group print:break-inside-avoid print:pl-0 print:border-l-4 print:border-slate-200 print:pl-4 print:mb-4">
+                    <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-slate-200 border-4 border-white group-hover:bg-orange-500 group-hover:border-orange-100 transition-colors print:hidden"></div>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm group-hover:shadow-md transition-shadow print:border-slate-200 print:bg-white print:shadow-none">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
                         <h5 className="font-bold text-sm text-slate-900 tracking-tight uppercase">{log.action.replace(/_/g, ' ')}</h5>
                         <span className="text-xs font-medium text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
