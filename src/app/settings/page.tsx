@@ -44,7 +44,7 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label>Email</Label>
-              <Input defaultValue="ramesh.k@legalmetrology.gov.in" />
+              <Input defaultValue="tarodenandini@gmail.com" />
             </div>
             <div className="space-y-2">
               <Label>Region/Zone</Label>
