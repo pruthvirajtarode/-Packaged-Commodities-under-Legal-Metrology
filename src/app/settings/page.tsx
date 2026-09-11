@@ -1,10 +1,25 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Save } from "lucide-react"
+import { Save, Check } from "lucide-react"
 
 export default function SettingsPage() {
+  const [isSaving, setIsSaving] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+
+  const handleSave = () => {
+    setIsSaving(true)
+    setTimeout(() => {
+      setIsSaving(false)
+      setIsSaved(true)
+      setTimeout(() => setIsSaved(false), 2000)
+    }, 800)
+  }
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
@@ -36,8 +51,18 @@ export default function SettingsPage() {
               <Input defaultValue="Maharashtra Zone 1" />
             </div>
           </div>
-          <Button className="mt-4 bg-slate-900 text-white hover:bg-slate-800">
-            <Save className="mr-2 h-4 w-4" /> Save Changes
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving || isSaved}
+            className={`mt-4 ${isSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-slate-900 hover:bg-slate-800'} text-white transition-colors`}
+          >
+            {isSaving ? (
+              <>Saving...</>
+            ) : isSaved ? (
+              <><Check className="mr-2 h-4 w-4" /> Saved Successfully</>
+            ) : (
+              <><Save className="mr-2 h-4 w-4" /> Save Changes</>
+            )}
           </Button>
         </CardContent>
       </Card>
