@@ -10,21 +10,21 @@ import { ContentWrapper } from "@/components/ContentWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PackSure AI | Legal Metrology Compliance",
-  description: "AI-assisted Legal Metrology compliance screening for packaged commodities. Verify product labels with computer vision and OCR before they reach consumers.",
-  keywords: ["Legal Metrology", "Packaged Commodities", "AI Compliance", "OCR Label Scanning", "Supply Chain Verification", "Smart India Hackathon", "PackSure AI"],
-  authors: [{ name: "PackSure AI Team" }],
+  title: "ScanSure AI | Legal Metrology Compliance",
+  description: "AI-powered dashboard for scanning and verifying packaged commodity labels against Legal Metrology guidelines.",
+  keywords: ["Legal Metrology", "Packaged Commodities", "AI Compliance", "OCR Label Scanning", "Supply Chain Verification", "Smart India Hackathon", "ScanSure AI"],
+  authors: [{ name: "ScanSure AI Team" }],
   openGraph: {
-    title: "PackSure AI | AI-assisted Legal Metrology Compliance",
-    description: "Automate compliance screening for packaged commodities using computer vision and explainable rule-based validation.",
-    url: "https://packsure-ai.vercel.app",
-    siteName: "PackSure AI",
+    title: "ScanSure AI | AI-assisted Legal Metrology Compliance",
+    description: "Ensure compliance with Legal Metrology rules using AI and OCR.",
+    url: "https://scansure-ai.vercel.app",
+    siteName: "ScanSure AI",
     images: [
       {
         url: "/hero-generated.png",
         width: 1200,
         height: 630,
-        alt: "PackSure AI Dashboard",
+        alt: "ScanSure AI Dashboard",
       },
     ],
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PackSure AI | Compliance Automation",
+    title: "ScanSure AI | Compliance Automation",
     description: "AI-assisted Legal Metrology compliance screening for packaged commodities.",
     images: ["/hero-generated.png"],
   },

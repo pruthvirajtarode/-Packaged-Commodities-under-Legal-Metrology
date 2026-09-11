@@ -12,7 +12,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         score: 100,
         confidenceScore: 95,
         createdAt: new Date().toISOString(),
-        inspector: { name: 'Nandini Tarode (Inspector)', email: 'inspector@packsure.ai' },
+        inspector: { name: 'Nandini Tarode (Inspector)', email: 'inspector@scansure.ai' },
         product: { name: 'Demo Product Label', category: 'Testing' },
         images: [{ url: '/sample_label.png', type: 'FRONT' }],
         extractedData: [

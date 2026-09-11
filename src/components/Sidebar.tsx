@@ -34,7 +34,7 @@ export function Sidebar() {
             <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-white" />
           </div>
           <h1 className="text-lg md:text-xl font-bold tracking-tight text-white hidden sm:block">
-            PackSure AI
+            ScanSure AI
           </h1>
         </Link>
         <div className="flex md:flex-col space-x-2 md:space-x-0 md:space-y-1 my-auto md:my-0">

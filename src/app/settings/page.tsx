@@ -71,7 +71,7 @@ export default function SettingsPage() {
       <Card className="shadow-sm border-slate-200">
         <CardHeader>
           <CardTitle>System Preferences</CardTitle>
-          <CardDescription>Configure PackSure AI defaults.</CardDescription>
+          <CardDescription>Configure ScanSure AI defaults.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50">

@@ -34,7 +34,7 @@ export default function LandingPage() {
             <div className="bg-orange-500 p-1.5 md:p-2 rounded-lg shadow-lg shadow-orange-500/20">
               <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-wider">PackSure AI</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-wider">ScanSure AI</h1>
           </div>
           <div className="flex gap-3 md:gap-4">
             <Link href="/dashboard" className="hidden sm:block">
@@ -136,7 +136,7 @@ export default function LandingPage() {
           transition={{ duration: 1, delay: 1.5 }}
           className="w-full py-8 text-center text-white/50 text-sm border-t border-white/10 mt-auto bg-black/40 backdrop-blur-sm"
         >
-          <p>Smart India Hackathon 2026 Prototype &bull; Problem Statement SIH26034 &bull; PackSure AI</p>
+          <p>Smart India Hackathon 2026 Prototype &bull; Problem Statement SIH26034 &bull; ScanSure AI</p>
         </motion.footer>
       </div>
     </div>

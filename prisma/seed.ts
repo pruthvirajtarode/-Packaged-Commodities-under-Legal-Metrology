@@ -7,20 +7,20 @@ async function main() {
 
   // 1. Seed Users
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@packsure.ai' },
+    where: { email: 'admin@scansure.ai' },
     update: {},
     create: {
-      email: 'admin@packsure.ai',
+      email: 'admin@scansure.ai',
       name: 'Admin User',
       role: 'ADMIN',
     },
   })
   
   const inspector = await prisma.user.upsert({
-    where: { email: 'inspector@packsure.ai' },
+    where: { email: 'inspector@scansure.ai' },
     update: {},
     create: {
-      email: 'inspector@packsure.ai',
+      email: 'inspector@scansure.ai',
       name: 'Nandini Tarode (Inspector)',
       role: 'INSPECTOR',
     },

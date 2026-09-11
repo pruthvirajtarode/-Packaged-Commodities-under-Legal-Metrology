@@ -22,7 +22,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-    page.drawText('PackSure AI - Compliance Report', { x: 50, y: height - 50, size: 20, font: boldFont })
+    page.drawText('ScanSure AI - Compliance Report', { x: 50, y: height - 50, size: 20, font: boldFont })
     
     page.drawText(`Inspection ID: ${inspection.id.slice(0, 8)}`, { x: 50, y: height - 80, size: 12, font })
     page.drawText(`Date: ${new Date(inspection.createdAt).toLocaleString()}`, { x: 50, y: height - 100, size: 12, font })
@@ -52,7 +52,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="PackSure_Report_${inspection.id.slice(0,8)}.pdf"`
+        'Content-Disposition': `attachment; filename="ScanSure_Report_${inspection.id.slice(0,8)}.pdf"`
       }
     })
 
