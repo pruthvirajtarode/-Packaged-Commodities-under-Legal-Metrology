@@ -197,7 +197,7 @@ export default function DashboardPage() {
       </motion.div>
 
       <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
+        <Card className="md:col-span-2 lg:col-span-4 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card className="col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
+        <Card className="md:col-span-2 lg:col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>Compliance Distribution</CardTitle>
             <CardDescription>Overall breakdown of inspection outcomes.</CardDescription>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow flex flex-col">
+        <Card className="md:col-span-2 lg:col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow flex flex-col">
           <CardHeader className="pb-3 border-b border-slate-100">
             <CardTitle className="flex justify-between items-center text-lg">
               <span>Recent AI Scans</span>

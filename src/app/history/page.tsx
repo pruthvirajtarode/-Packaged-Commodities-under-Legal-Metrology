@@ -49,12 +49,12 @@ export default function HistoryPage() {
       </div>
 
       <Card className="shadow-sm border-slate-200">
-        <div className="p-4 border-b border-slate-100 bg-slate-50 rounded-t-xl flex justify-between items-center">
-          <div className="relative w-72">
+        <div className="p-4 border-b border-slate-100 bg-slate-50 rounded-t-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input 
               placeholder="Search product or ID..." 
-              className="pl-9 bg-white"
+              className="pl-9 bg-white w-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
