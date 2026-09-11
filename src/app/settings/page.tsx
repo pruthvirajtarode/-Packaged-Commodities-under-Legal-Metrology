@@ -10,6 +10,7 @@ import { Save, Check } from "lucide-react"
 export default function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const [isAutoPassEnabled, setIsAutoPassEnabled] = useState(true)
 
   const handleSave = () => {
     setIsSaving(true)
@@ -78,7 +79,14 @@ export default function SettingsPage() {
               <p className="font-medium text-sm text-slate-900">High Confidence Auto-Pass</p>
               <p className="text-xs text-slate-500">Automatically skip human review if OCR confidence is above 90%.</p>
             </div>
-            <Button variant="outline" size="sm">Enabled</Button>
+            <Button 
+              variant={isAutoPassEnabled ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsAutoPassEnabled(!isAutoPassEnabled)}
+              className={isAutoPassEnabled ? "bg-slate-900 text-white hover:bg-slate-800" : ""}
+            >
+              {isAutoPassEnabled ? "Enabled" : "Disabled"}
+            </Button>
           </div>
         </CardContent>
       </Card>
