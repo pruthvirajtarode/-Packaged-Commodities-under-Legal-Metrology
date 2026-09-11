@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScanLine, CheckCircle, AlertTriangle, RefreshCcw, FileText, ArrowRight, Activity } from "lucide-react";
+import { ScanLine, CheckCircle, AlertTriangle, RefreshCcw, FileText, ArrowRight, Activity, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { motion } from "framer-motion";
 
 const initialChartData = [
   { name: 'Mon', Compliant: 40, NonCompliant: 24, Review: 10 },
@@ -23,7 +24,7 @@ const initialLiveStream = Array.from({ length: 20 }).map((_, i) => ({
   scans: Math.floor(Math.random() * 10) + 5
 }));
 
-const PIE_COLORS = ['#22c55e', '#ef4444', '#f97316'];
+const PIE_COLORS = ['#10b981', '#f43f5e', '#f59e0b'];
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>({ totalInspections: 1250, compliant: 850, nonCompliant: 250, requiresReview: 150 });
@@ -97,204 +98,251 @@ export default function DashboardPage() {
     { name: 'Review', value: stats.requiresReview || 1 }
   ];
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } }
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-8"
+    >
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Live Dashboard</h2>
-            <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200 animate-pulse flex gap-1 items-center">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 drop-shadow-sm">Live Dashboard</h2>
+            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200 animate-pulse flex gap-1.5 items-center px-2.5 py-0.5 rounded-full shadow-sm">
               <Activity className="h-3 w-3" /> LIVE
             </Badge>
           </div>
           <p className="text-slate-500 mt-1">Real-time overview of your inspection metrics and activity.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/inspections/new">
-            <Button className="bg-orange-500 hover:bg-orange-600 shadow-md">
-              <ScanLine className="mr-2 h-4 w-4" /> New Inspection
-            </Button>
-          </Link>
-        </div>
-      </div>
+        <Link href="/inspections/new">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 group h-10 px-6 rounded-full font-medium">
+            <ScanLine className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" /> New Inspection
+          </Button>
+        </Link>
+      </motion.div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="shadow-sm border-slate-200 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="shadow-lg shadow-blue-500/5 border-slate-200 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 group-hover:h-1.5 transition-all"></div>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">Total Inspections</CardTitle>
-            <ScanLine className="h-4 w-4 text-slate-400" />
+            <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+              <ScanLine className="h-4 w-4 text-blue-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{loading ? '-' : stats?.totalInspections}</div>
-            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+            <div className="text-3xl font-bold text-slate-900 tracking-tight">{loading ? '-' : stats?.totalInspections}</div>
+            <p className="text-xs text-slate-500 mt-2 flex items-center gap-1 font-medium">
               <Activity className="h-3 w-3 text-blue-500" /> Updating live
             </p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-slate-200 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+        
+        <Card className="shadow-lg shadow-emerald-500/5 border-slate-200 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-emerald-50/30">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 group-hover:h-1.5 transition-all"></div>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">Compliant</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <div className="p-2 bg-emerald-50 rounded-lg group-hover:bg-emerald-100 transition-colors">
+              <CheckCircle className="h-4 w-4 text-emerald-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600 transition-all duration-300">{loading ? '-' : stats?.compliant}</div>
-            <p className="text-xs text-slate-500 mt-1">Products passed all rules</p>
+            <div className="text-3xl font-bold text-emerald-600 transition-all duration-300 tracking-tight">{loading ? '-' : stats?.compliant}</div>
+            <p className="text-xs text-slate-500 mt-2 font-medium">Products passed all rules</p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-slate-200 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+
+        <Card className="shadow-lg shadow-rose-500/5 border-slate-200 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-rose-50/30">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-400 to-rose-600 group-hover:h-1.5 transition-all"></div>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">Non-Compliant</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <div className="p-2 bg-rose-50 rounded-lg group-hover:bg-rose-100 transition-colors">
+              <AlertTriangle className="h-4 w-4 text-rose-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-600 transition-all duration-300">{loading ? '-' : stats?.nonCompliant}</div>
-            <p className="text-xs text-slate-500 mt-1">Critical violations found</p>
+            <div className="text-3xl font-bold text-rose-600 transition-all duration-300 tracking-tight">{loading ? '-' : stats?.nonCompliant}</div>
+            <p className="text-xs text-slate-500 mt-2 font-medium">Critical violations found</p>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-slate-200 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>
+
+        <Card className="shadow-lg shadow-amber-500/5 border-slate-200 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-amber-50/30">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-orange-500 group-hover:h-1.5 transition-all"></div>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">Requires Review</CardTitle>
-            <RefreshCcw className="h-4 w-4 text-orange-500" />
+            <div className="p-2 bg-amber-50 rounded-lg group-hover:bg-amber-100 transition-colors">
+              <RefreshCcw className="h-4 w-4 text-amber-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-orange-600 transition-all duration-300">{loading ? '-' : stats?.requiresReview}</div>
-            <p className="text-xs text-slate-500 mt-1">Pending human verification</p>
+            <div className="text-3xl font-bold text-amber-600 transition-all duration-300 tracking-tight">{loading ? '-' : stats?.requiresReview}</div>
+            <p className="text-xs text-slate-500 mt-2 font-medium">Pending human verification</p>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-sm border-slate-200">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle>Live Scanning Activity</CardTitle>
-            <CardDescription>Real-time throughput of the AI inspection pipeline (scans per second).</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Live Scanning Activity</CardTitle>
+                <CardDescription>Real-time throughput of the AI inspection pipeline.</CardDescription>
+              </div>
+              <div className="p-2 bg-blue-50 text-blue-600 rounded-full">
+                <TrendingUp className="h-4 w-4" />
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="pl-2">
-            <div className="h-[250px] w-full mt-2">
+          <CardContent className="pl-0 pr-4">
+            <div className="h-[260px] w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={liveStream}>
                   <defs>
                     <linearGradient id="colorScans" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
                       <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="time" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Area type="monotone" dataKey="scans" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorScans)" isAnimationActive={false} />
+                  <XAxis dataKey="time" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickMargin={10} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickMargin={10} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', padding: '12px' }}
+                    itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                  />
+                  <Area type="monotone" dataKey="scans" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorScans)" isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="col-span-3 shadow-sm border-slate-200">
+        <Card className="col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>Compliance Distribution</CardTitle>
             <CardDescription>Overall breakdown of inspection outcomes.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px] w-full flex items-center justify-center">
+            <div className="h-[240px] w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={5}
+                    innerRadius={70}
+                    outerRadius={95}
+                    paddingAngle={3}
                     dataKey="value"
                     stroke="none"
+                    isAnimationActive={true}
                   >
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ fontWeight: 'bold' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex justify-center gap-4 text-sm mt-2">
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-500"></div> Pass</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-500"></div> Fail</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-orange-500"></div> Review</div>
+            <div className="flex justify-center gap-6 text-sm mt-4 font-medium text-slate-600">
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full shadow-sm bg-emerald-500"></div> Pass</div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full shadow-sm bg-rose-500"></div> Fail</div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full shadow-sm bg-amber-500"></div> Review</div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 shadow-sm border-slate-200">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4 shadow-sm border-slate-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>Historical Inspection Volume</CardTitle>
             <CardDescription>Daily breakdown of inspection results over the last 7 days.</CardDescription>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="pl-0 pr-4">
             <div className="h-[300px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  <Bar dataKey="Compliant" fill="#22c55e" radius={[4, 4, 0, 0]} stackId="a" />
-                  <Bar dataKey="Review" fill="#f97316" radius={[0, 0, 0, 0]} stackId="a" />
-                  <Bar dataKey="NonCompliant" fill="#ef4444" radius={[0, 0, 4, 4]} stackId="a" />
+                  <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickMargin={10} />
+                  <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickMargin={10} />
+                  <Tooltip 
+                    cursor={{fill: '#f1f5f9'}} 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', padding: '12px' }}
+                  />
+                  <Bar dataKey="Compliant" fill="#10b981" radius={[4, 4, 0, 0]} stackId="a" />
+                  <Bar dataKey="Review" fill="#f59e0b" radius={[0, 0, 0, 0]} stackId="a" />
+                  <Bar dataKey="NonCompliant" fill="#f43f5e" radius={[0, 0, 4, 4]} stackId="a" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="col-span-3 shadow-sm border-slate-200">
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
+        <Card className="col-span-3 shadow-sm border-slate-200 hover:shadow-md transition-shadow flex flex-col">
+          <CardHeader className="pb-3 border-b border-slate-100">
+            <CardTitle className="flex justify-between items-center text-lg">
               <span>Recent AI Scans</span>
-              <Activity className="h-4 w-4 text-slate-400 animate-pulse" />
+              <Badge variant="outline" className="bg-slate-50 text-slate-500 font-normal shadow-sm">
+                Live Feed
+              </Badge>
             </CardTitle>
-            <CardDescription>Latest product scans flowing through the system.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recent.length === 0 && <p className="text-sm text-slate-500 py-4 text-center">Waiting for live data...</p>}
+          <CardContent className="flex-1 flex flex-col pt-4">
+            <div className="space-y-4 flex-1">
+              {recent.length === 0 && <p className="text-sm text-slate-500 py-8 text-center">Waiting for live data stream...</p>}
               {recent.map((inspection, i) => (
-                <div key={`${inspection.id}-${i}`} className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0 last:pb-0 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div key={`${inspection.id}-${i}`} className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0 last:pb-0 animate-in fade-in slide-in-from-right-4 duration-500 ease-out">
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="p-2 bg-slate-50 rounded-md border border-slate-100">
-                      <FileText className="h-4 w-4 text-slate-400" />
+                    <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100 shadow-sm">
+                      <FileText className="h-4 w-4 text-slate-500" />
                     </div>
                     <div className="truncate pr-4">
-                      <p className="text-sm font-medium truncate text-slate-900">{inspection.product?.name || 'Unknown Product'}</p>
-                      <p className="text-xs text-slate-400">{new Date(inspection.createdAt).toLocaleTimeString()} &bull; AI Confidence: {inspection.score || (Math.floor(Math.random()*15)+85)}%</p>
+                      <p className="text-sm font-semibold truncate text-slate-900">{inspection.product?.name || 'Unknown Product'}</p>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">{new Date(inspection.createdAt).toLocaleTimeString()} &bull; <span className="text-indigo-600">AI Confidence: {inspection.score || (Math.floor(Math.random()*15)+85)}%</span></p>
                     </div>
                   </div>
                   <div>
-                    {inspection.status === 'COMPLIANT' && <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 shadow-sm">PASS</Badge>}
-                    {inspection.status === 'NON_COMPLIANT' && <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 shadow-sm">FAIL</Badge>}
-                    {inspection.status === 'REQUIRES_REVIEW' && <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 shadow-sm">REVIEW</Badge>}
-                    {inspection.status === 'PENDING' && <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 shadow-sm">PENDING</Badge>}
+                    {inspection.status === 'COMPLIANT' && <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm px-2.5 py-0.5">PASS</Badge>}
+                    {inspection.status === 'NON_COMPLIANT' && <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 shadow-sm px-2.5 py-0.5">FAIL</Badge>}
+                    {inspection.status === 'REQUIRES_REVIEW' && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 shadow-sm px-2.5 py-0.5">REVIEW</Badge>}
+                    {inspection.status === 'PENDING' && <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 shadow-sm px-2.5 py-0.5">PENDING</Badge>}
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-6">
+            <div className="mt-4 pt-4 border-t border-slate-100">
               <Link href="/history">
-                <Button variant="outline" className="w-full text-sm bg-slate-50 hover:bg-slate-100">
-                  View All History <ArrowRight className="ml-2 h-4 w-4" />
+                <Button variant="ghost" className="w-full text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors group">
+                  View All History <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 }
+
